@@ -14,6 +14,8 @@ import com.javaProject.JavaSpringBootWeb.exceptions.DatabaseException;
 import com.javaProject.JavaSpringBootWeb.exceptions.ResourceNotFoundException;
 import com.javaProject.JavaSpringBootWeb.repositories.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserService {
 	
@@ -43,12 +45,11 @@ public class UserService {
 		repository.deleteById(id);
 		
 		
-		}
-		/*catch(EmptyResultDataAccessException e) {
+		}catch(EmptyResultDataAccessException e) {
 			
 			throw new ResourceNotFoundException(id);
 			
-		}*/catch(DataIntegrityViolationException e) {
+		}catch(DataIntegrityViolationException e) {
 			
 			throw new DatabaseException(e.getMessage());
 			
@@ -60,9 +61,15 @@ public class UserService {
 }
 	
 	public User Update(Long id, User obj) {
-		User entity = repository.getReferenceById(id);
-		updateData(entity, obj);
-		return repository.save(entity);
+		try {
+			
+			User entity = repository.getReferenceById(id);
+			updateData(entity, obj);
+			return repository.save(entity);
+			
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
 		
 	}
 
