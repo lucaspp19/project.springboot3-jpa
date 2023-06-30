@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.javaProject.JavaSpringBootWeb.entities.User;
+import com.javaProject.JavaSpringBootWeb.exceptions.ResourceNotFoundException;
 import com.javaProject.JavaSpringBootWeb.repositories.UserRepository;
 
 @Service
@@ -24,7 +25,7 @@ public class UserService {
 	public User findById(Long id) {
 		
 		Optional<User> obj = repository.findById(id);
-		return obj.get();
+		return obj.orElseThrow( ()-> new ResourceNotFoundException(id) );
 		
 	}
 	
